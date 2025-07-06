@@ -3,23 +3,28 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "npm run db:start && concurrently \"npm run prisma:studio\" \"nuxt dev\"",
     "build": "nuxt build",
-    "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "db:start": "docker compose -f docker-compose.yml up -d",
+    "db:clean": "docker compose -f docker-compose.yml down -v",
+    "db:init": "docker compose -f docker-compose.yml -f docker-compose.init.yml up -d",
+    "db:migrate": "prisma migrate dev --schema=server/db/schema.prisma",
+    "prisma:sync": "npx prisma introspect --schema=server/db/schema.prisma && npx prisma generate --schema=server/db/schema.prisma",
+    "prisma:studio": "npx prisma studio --schema=server/db/schema.prisma --browser none",
     "lint": "eslint .",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/eslint": "^1.4.1",
     "@nuxt/fonts": "^0.11.4",
     "@nuxt/icon": "^1.15.0",
     "@nuxt/image": "^1.10.0",
     "@pinia/nuxt": "^0.11.1",
+    "@prisma/client": "^6.11.1",
     "@tailwindcss/vite": "^4.1.11",
     "echarts": "^5.6.0",
-    "eslint": "^9.30.0",
     "nuxt": "^3.17.5",
     "nuxt-echarts": "^0.3.3",
     "pinia": "^3.0.3",
@@ -28,9 +33,13 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@nuxt/eslint": "^1.5.0",
+    "concurrently": "^9.2.0",
+    "eslint": "^9.30.1",
     "eslint-plugin-prettier": "^5.5.1",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.1.0",
-    "prettier-plugin-tailwindcss": "^0.6.13"
+    "prettier-plugin-tailwindcss": "^0.6.13",
+    "prisma": "^6.11.1"
   }
 }

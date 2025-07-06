@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Area {
+  year          Int    @db.SmallInt
+  province_code String @db.VarChar(2)
+  city_code     String @db.VarChar(3)
+  town_code     String @db.VarChar(3)
+  village_code  String @db.VarChar(4)
+  name          String @db.VarChar(300)
+
+  @@id([year, province_code, city_code, town_code, village_code])
+  @@map("area")
+}
+
+model areaVote {
+  year          Int     @db.SmallInt
+  province_code String  @db.VarChar(2)
+  city_code     String  @db.VarChar(3)
+  town_code     String  @db.VarChar(3)
+  village_code  String  @db.VarChar(4)
+  valid_votes   Int
+  invalid_votes Int
+  total_votes   Int
+  voter_turnout Decimal @db.Decimal(5, 2)
+
+  @@id([year, province_code, city_code, town_code, village_code])
+  @@map("area_vote")
+}
+
+model Party {
+  code Int    @id @db.SmallInt
+  name String @db.VarChar(40)
+
+  @@map("party")
+}
+
+model Candidate {
+  year       Int    @db.SmallInt
+  no         Int    @db.SmallInt
+  name       String @db.VarChar(80)
+  party_code Int    @db.SmallInt
+
+  @@id([year, no])
+  @@map("candidate")
+}
+
+model CandidateVote {
+  year          Int     @db.SmallInt
+  province_code String  @db.VarChar(2)
+  city_code     String  @db.VarChar(3)
+  town_code     String  @db.VarChar(3)
+  village_code  String  @db.VarChar(4)
+  candidate_no  Int     @db.SmallInt
+  total_votes   Int
+  voter_turnout Decimal @db.Decimal(5, 2)
+  is_elected    Boolean
+
+  @@id([year, province_code, city_code, town_code, village_code, candidate_no])
+  @@map("candidate_vote")
+}

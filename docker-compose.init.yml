@@ -1,0 +1,8 @@
+services:
+  postgres:
+    volumes:
+      # 初始化資料
+      - ./server/db/data:/docker-entrypoint-initdb.d/data
+
+      # 初始化 SQL
+      - ./server/db/init.sql:/docker-entrypoint-initdb.d/init.sql
