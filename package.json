@@ -10,6 +10,7 @@
     "db:start": "docker compose -f docker-compose.yml up -d",
     "db:clean": "docker compose -f docker-compose.yml down -v",
     "db:init": "docker compose -f docker-compose.yml -f docker-compose.init.yml up -d",
+    "db:push:cloud": "dotenv -e .env -- powershell -Command \"docker exec postgres pg_dump -U dev --no-owner --no-privileges --clean my_db | docker run --rm -i postgres psql $env:DATABASE_URL\"",
     "db:migrate": "prisma migrate dev --schema=server/db/schema.prisma",
     "prisma:sync": "npx prisma introspect --schema=server/db/schema.prisma && npx prisma generate --schema=server/db/schema.prisma",
     "prisma:studio": "npx prisma studio --schema=server/db/schema.prisma --browser none",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.5.0",
     "concurrently": "^9.2.0",
+    "dotenv-cli": "^10.0.0",
     "eslint": "^9.30.1",
     "eslint-plugin-prettier": "^5.5.1",
     "prettier": "^3.6.2",
