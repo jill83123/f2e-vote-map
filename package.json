@@ -13,6 +13,7 @@
     "db:push:cloud": "dotenv -e .env -- powershell -Command \"docker exec postgres pg_dump -U dev --no-owner --no-privileges --clean my_db | docker run --rm -i postgres psql $env:DATABASE_URL\"",
     "db:migrate": "prisma migrate dev --schema=server/db/schema.prisma",
     "prisma:sync": "npx prisma introspect --schema=server/db/schema.prisma && npx prisma generate --schema=server/db/schema.prisma",
+    "prisma:generate": "prisma generate --schema=server/db/schema.prisma",
     "prisma:studio": "npx prisma studio --schema=server/db/schema.prisma --browser none",
     "lint": "eslint .",
     "prettier": "prettier --write .",
