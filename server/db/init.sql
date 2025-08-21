@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS area (
   town_code     VARCHAR(3)   NOT NULL,
   village_code  VARCHAR(4)   NOT NULL,
   name          VARCHAR(300) NOT NULL,
+
   PRIMARY KEY (year, province_code, city_code, town_code, village_code)
 );
 
@@ -26,7 +27,12 @@ CREATE TABLE IF NOT EXISTS area_vote (
   invalid_votes   INT           NOT NULL,
   total_votes     INT           NOT NULL,
   voter_turnout   NUMERIC(5, 2) NOT NULL,
-  PRIMARY KEY (year, province_code, city_code, town_code, village_code)
+
+  PRIMARY KEY (year, province_code, city_code, town_code, village_code),
+  FOREIGN KEY (year, province_code, city_code, town_code, village_code)
+    REFERENCES area(year, province_code, city_code, town_code, village_code)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT
 );
 
 COPY area_vote
@@ -53,7 +59,12 @@ CREATE TABLE IF NOT EXISTS candidate (
   no         SMALLINT    NOT NULL,
   name       VARCHAR(80) NOT NULL,
   party_code SMALLINT    NOT NULL,
-  PRIMARY KEY (year, no)
+
+  PRIMARY KEY (year, no),
+  FOREIGN KEY (party_code)
+    REFERENCES party(code)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT
 );
 
 COPY candidate
@@ -73,7 +84,16 @@ CREATE TABLE IF NOT EXISTS candidate_vote (
   total_votes   INT           NOT NULL,
   voter_turnout NUMERIC(5, 2) NOT NULL,
   is_elected    BOOLEAN       NOT NULL,
-  PRIMARY KEY (year, province_code, city_code, town_code, village_code, candidate_no)
+
+  PRIMARY KEY (year, province_code, city_code, town_code, village_code, candidate_no),
+  FOREIGN KEY (year, province_code, city_code, town_code, village_code)
+    REFERENCES area(year, province_code, city_code, town_code, village_code)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT,
+  FOREIGN KEY (year, candidate_no)
+    REFERENCES candidate(year, no)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT
 );
 
 COPY candidate_vote
