@@ -1,1 +1,38 @@
 @import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Roboto', 'Noto Sans TC', sans-serif;
+  --color-primary: #d4009b;
+  --color-role-001: #8082ff;
+  --color-role-002: #f4a76f;
+  --color-role-003: #57d2a9;
+  --color-gray-100: #f8f9fa;
+  --color-gray-200: #e9ecef;
+  --color-gray-300: #dee2e6;
+  --color-gray-400: #ced4da;
+  --color-gray-500: #adb5bd;
+  --color-gray-600: #6c757d;
+  --color-gray-700: #495057;
+  --color-gray-800: #343a40;
+  --color-gray-900: #212529;
+  --color-white: #ffffff;
+  --color-black: #000000;
+}
+
+@utility semantic-text-primary {
+  color: #334155;
+}
+@utility semantic-text-secondary {
+  color: #64748b;
+}
+@utility semantic-bg-primary {
+  @apply bg-gray-200;
+}
+@utility semantic-bg-hover {
+  &:hover {
+    @apply bg-gray-100;
+  }
+}
+@utility semantic-border-primary {
+  @apply border-gray-300;
+}

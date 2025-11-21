@@ -12,6 +12,12 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'nuxt-echarts',
   ],
+  fonts: {
+    families: [
+      { name: 'Roboto', provider: 'google' },
+      { name: 'Noto Sans TC', provider: 'google' },
+    ],
+  },
   css: ['@/assets/css/main.css'],
   vite: { plugins: [tailwindcss()] },
 });
