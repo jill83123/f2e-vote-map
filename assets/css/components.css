@@ -1,0 +1,6 @@
+@layer components {
+  .btn {
+    @apply semantic-bg-primary semantic-text-primary rounded-full;
+    @apply hover:bg-primary transition-colors hover:text-white;
+  }
+}

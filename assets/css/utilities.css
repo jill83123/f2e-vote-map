@@ -1,0 +1,29 @@
+@utility semantic-text-primary {
+  color: #334155;
+}
+@utility semantic-text-secondary {
+  color: #64748b;
+}
+@utility semantic-bg-primary {
+  @apply bg-gray-200;
+}
+@utility semantic-bg-hover {
+  &:hover {
+    @apply bg-gray-100;
+  }
+}
+@utility semantic-border-primary {
+  @apply border-gray-300;
+}
+
+@utility visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

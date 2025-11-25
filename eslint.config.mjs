@@ -10,6 +10,7 @@ export default withNuxt(
     },
     rules: {
       'prettier/prettier': 'warn',
+      'vue/html-self-closing': ['warn', { html: { void: 'always' } }],
     },
   },
   {
