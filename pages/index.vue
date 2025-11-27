@@ -37,8 +37,9 @@
 </template>
 
 <script lang="ts" setup>
-const { data } = await useFetch('/api/years');
-const years = computed(() => (data.value?.years ? [...data.value.years].reverse() : []));
+const yearStore = useYearStore();
+await yearStore.getYears();
+const years = computed(() => (yearStore.years ? [...yearStore.years].reverse() : []));
 </script>
 
 <style scoped></style>
