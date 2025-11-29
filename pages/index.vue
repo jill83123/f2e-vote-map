@@ -14,9 +14,12 @@
 
       <ul v-if="years.length" class="-mx-2 flex flex-wrap justify-center gap-y-4">
         <li v-for="year in years" :key="year" class="w-1/2 px-2 sm:w-1/4 md:w-1/5">
-          <routerLink :to="`/result/?year=${year}`" class="btn block p-3 font-bold">
+          <UButton
+            :to="{ path: '/result' }"
+            class="hover:bg-primary w-full p-3 font-bold hover:text-white!"
+          >
             {{ year }}
-          </routerLink>
+          </UButton>
         </li>
       </ul>
 
