@@ -13,7 +13,7 @@
   }
 }
 @utility semantic-border-primary {
-  @apply border-gray-300;
+  @apply border-gray-300 ring-gray-300;
 }
 
 @utility visually-hidden {

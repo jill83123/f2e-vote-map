@@ -1,4 +1,12 @@
+:root {
+  --ui-success: #4ccaa0;
+  --ui-info: #64c7ff;
+  --ui-warning: #ffb769;
+  --ui-error: #ff6582;
+}
+
 @theme {
+  --container-xxl: 1920px;
   --font-sans: 'Roboto', 'Noto Sans TC', sans-serif;
   --color-primary: #d4009b;
   --color-role-001: #8082ff;

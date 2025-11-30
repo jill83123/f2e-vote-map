@@ -17,6 +17,7 @@
           <UButton
             :to="{ path: '/result' }"
             class="hover:bg-primary w-full p-3 font-bold hover:text-white!"
+            @click="areaStore.updateYear(String(year))"
           >
             {{ year }}
           </UButton>
@@ -41,6 +42,8 @@
 
 <script lang="ts" setup>
 const yearStore = useYearStore();
+const areaStore = useAreaStore();
+
 await yearStore.getYears();
 const years = computed(() => (yearStore.years ? [...yearStore.years].reverse() : []));
 </script>

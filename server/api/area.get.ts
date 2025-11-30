@@ -1,4 +1,5 @@
 import type { AreaCode } from '@/types/area';
+import { getAreaDefaultCode } from '@/utils/area';
 import { CITY_ORDER, EXCLUDED_PROVINCE } from '../constants/area';
 import RESPONSES from '../constants/responses';
 import { prisma } from '../db/client';
@@ -8,41 +9,41 @@ import { formatZodError } from '../utils/format';
 type AreaLevel = 'nation' | 'city' | 'town' | 'village';
 type AreaLevelParams = { level: AreaLevel } & Omit<AreaCode, 'villageCode'>;
 
-const getAreaLevel = ({ provinceCode, cityCode, townCode, villageCode }: AreaCode) => {
-  let level: AreaLevel | null = null;
+const defaultCode = getAreaDefaultCode();
 
-  if (provinceCode === '00' && cityCode === '000' && townCode === '000' && villageCode === '0000') {
-    level = 'nation';
-  } else if (provinceCode && cityCode && townCode === '000' && villageCode === '0000') {
-    level = 'city';
-  } else if (provinceCode && cityCode && townCode && villageCode === '0000') {
-    level = 'town';
-  } else if (provinceCode && cityCode && townCode && villageCode) {
-    level = 'village';
-  }
+const getAreaLevel = ({ provinceCode, cityCode, townCode, villageCode }: AreaCode): AreaLevel => {
+  if (
+    provinceCode === defaultCode.province &&
+    cityCode === defaultCode.city &&
+    townCode === defaultCode.town &&
+    villageCode === defaultCode.village
+  )
+    return 'nation';
 
-  return level;
+  if (townCode === defaultCode.town && villageCode === defaultCode.village) return 'city';
+  if (villageCode === defaultCode.village) return 'town';
+  return 'village';
 };
 
 const getSubAreaWhere = ({ level, provinceCode, cityCode, townCode }: AreaLevelParams) => {
   switch (level) {
     case 'nation':
       return {
-        town_code: '000',
+        town_code: defaultCode.town,
       };
     case 'city':
       return {
         province_code: provinceCode,
         city_code: cityCode,
-        town_code: { not: '000' },
-        village_code: '0000',
+        town_code: { not: defaultCode.town },
+        village_code: defaultCode.village,
       };
     case 'town':
       return {
         province_code: provinceCode,
         city_code: cityCode,
         town_code: townCode,
-        village_code: { not: '0000' },
+        village_code: { not: defaultCode.village },
       };
     default:
       return null;
@@ -54,10 +55,10 @@ const getParentAreaWhere = ({ level, provinceCode, cityCode, townCode }: AreaLev
 
   const codes = [
     {
-      province_code: '00',
-      city_code: '000',
-      town_code: '000',
-      village_code: '0000',
+      province_code: defaultCode.province,
+      city_code: defaultCode.city,
+      town_code: defaultCode.town,
+      village_code: defaultCode.village,
     },
   ];
 
@@ -65,8 +66,8 @@ const getParentAreaWhere = ({ level, provinceCode, cityCode, townCode }: AreaLev
     codes.push({
       province_code: provinceCode,
       city_code: cityCode,
-      town_code: '000',
-      village_code: '0000',
+      town_code: defaultCode.town,
+      village_code: defaultCode.village,
     });
   }
 
@@ -75,7 +76,7 @@ const getParentAreaWhere = ({ level, provinceCode, cityCode, townCode }: AreaLev
       province_code: provinceCode,
       city_code: cityCode,
       town_code: townCode,
-      village_code: '0000',
+      village_code: defaultCode.village,
     });
   }
 
@@ -230,20 +231,20 @@ export default defineEventHandler(async (event) => {
     year,
     area: {
       name: area.name,
-      validVotes: area.area_vote?.valid_votes,
-      invalidVotes: area.area_vote?.invalid_votes,
-      totalVotes: area.area_vote?.total_votes,
-      voterTurnout: area.area_vote?.voter_turnout,
+      validVotes: area.area_vote?.valid_votes ?? 0,
+      invalidVotes: area.area_vote?.invalid_votes ?? 0,
+      totalVotes: area.area_vote?.total_votes ?? 0,
+      voterTurnout: area.area_vote?.voter_turnout ? Number(area.area_vote?.voter_turnout) : 0,
       candidates: area.candidate_vote.map((candidate) => ({
         name: candidate.candidate.name,
         partyName: candidate.candidate.party.name,
-        totalVotes: candidate.total_votes,
+        totalVotes: candidate.total_votes ?? 0,
         isElected: candidate.is_elected,
       })),
       history: history.map((item) => ({
         year: item.year,
         partyName: item.candidate.party.name,
-        totalVotes: item.total_votes,
+        totalVotes: item.total_votes ?? 0,
       })),
     },
     subAreas: subAreas.map((subArea) => ({
@@ -255,11 +256,11 @@ export default defineEventHandler(async (event) => {
       candidates: subArea.candidate_vote.map((item) => ({
         name: item.candidate.name,
         partyName: item.candidate.party.name,
-        totalVotes: item.total_votes,
+        totalVotes: item.total_votes ?? 0,
         isElected: item.is_elected,
       })),
-      totalVotes: subArea.area_vote?.total_votes,
-      voterTurnout: subArea.area_vote?.voter_turnout,
+      totalVotes: subArea.area_vote?.total_votes ?? 0,
+      voterTurnout: subArea.area_vote?.voter_turnout ? Number(subArea.area_vote?.voter_turnout) : 0,
     })),
     parentAreas: parentAreas.map((parent) => ({
       provinceCode: parent.province_code,
