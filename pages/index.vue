@@ -15,12 +15,11 @@
       <ul v-if="years.length" class="-mx-2 flex flex-wrap justify-center gap-y-4">
         <li v-for="year in years" :key="year" class="w-1/2 px-2 sm:w-1/4 md:w-1/5">
           <UButton
+            :label="year.toString()"
             :to="{ path: '/result' }"
-            class="hover:bg-primary w-full p-3 font-bold hover:text-white!"
+            class="hover:bg-primary active:bg-primary w-full p-3 hover:text-white"
             @click="areaStore.updateYear(String(year))"
-          >
-            {{ year }}
-          </UButton>
+          />
         </li>
       </ul>
 

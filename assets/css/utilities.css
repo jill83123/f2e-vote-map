@@ -1,18 +1,18 @@
-@utility semantic-text-primary {
+@utility text-semantic-primary {
   color: #334155;
 }
-@utility semantic-text-secondary {
+@utility text-semantic-secondary {
   color: #64748b;
 }
-@utility semantic-bg-primary {
+@utility bg-semantic-primary {
   @apply bg-gray-200;
 }
-@utility semantic-bg-hover {
+@utility bg-semantic-hover {
   &:hover {
     @apply bg-gray-100;
   }
 }
-@utility semantic-border-primary {
+@utility border-semantic-primary {
   @apply border-gray-300 ring-gray-300;
 }
 

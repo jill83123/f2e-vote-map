@@ -1,5 +1,5 @@
 <template>
-  <nav class="semantic-border-primary sm:border-b">
+  <nav class="border-semantic-primary sm:border-b">
     <div class="max-w-xxl mx-auto flex items-center px-4 py-2.5 sm:px-6 sm:py-3">
       <div class="flex grow flex-wrap items-center md:flex-nowrap">
         <NuxtLink
@@ -23,14 +23,14 @@
             v-model="yearSelectValue"
             :items="yearSelectItems"
             :content="{ align: windowWidth < 768 ? 'end' : 'start' }"
-            class="w-[76px] pr-3 sm:w-[118px] sm:px-4!"
+            class="w-[76px] pr-3 sm:w-[118px] sm:px-4"
             @update:model-value="handleYearChange"
           />
         </div>
 
         <div class="flex w-full grow pt-4 md:py-0 lg:w-auto">
           <div
-            class="semantic-bg-primary hidden items-center rounded-s-full pl-3 text-gray-800 sm:flex"
+            class="bg-semantic-primary hidden items-center rounded-s-full pl-3 text-gray-800 sm:flex"
           >
             <Icon name="mdi-magnify" />
           </div>
@@ -41,7 +41,7 @@
             :ui="{
               trailing: 'after:absolute after:right-0 after:h-4 after:w-0.5 after:bg-gray-400',
             }"
-            class="relative w-full! min-w-[120px] rounded-e-none pl-6! sm:rounded-none sm:pl-3! lg:max-w-[194px]"
+            class="relative w-full min-w-[120px] rounded-e-none pl-6 sm:rounded-none sm:pl-3 lg:max-w-[194px]"
             @update:model-value="handleCityChange"
           />
           <USelect
@@ -54,7 +54,7 @@
                 : '選擇區域'
             "
             :disabled="citySelectValue === `${defaultCode.province}-${defaultCode.city}`"
-            class="w-full! min-w-[120px] rounded-s-none lg:max-w-[194px]"
+            class="w-full min-w-[120px] rounded-s-none lg:max-w-[194px]"
             @update:model-value="handleTownChange"
           />
         </div>
