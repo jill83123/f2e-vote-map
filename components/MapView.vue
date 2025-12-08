@@ -223,14 +223,14 @@ const buildCityLayer = () => {
 
   mapSelection
     .selectAll('.city-label')
-    .data(labelData.filter((d) => d.properties?.displayName))
+    .data(labelData.filter((data) => data.properties?.displayName))
     .enter()
     .append('text')
     .attr('class', 'city-label')
     .attr('font-size', () => `${baseFontSize.value}px`)
-    .text((d) => d.properties?.displayName)
-    .attr('x', (d) => (pathGenerator ? pathGenerator.centroid(d)[0] : 0))
-    .attr('y', (d) => (pathGenerator ? pathGenerator.centroid(d)[1] : 0));
+    .text((data) => data.properties?.displayName)
+    .attr('x', (data) => (pathGenerator ? pathGenerator.centroid(data)[0] : 0))
+    .attr('y', (data) => (pathGenerator ? pathGenerator.centroid(data)[1] : 0));
 };
 
 const buildIslandLayer = () => {
@@ -440,10 +440,10 @@ const zoomToCity = async function (feature: Feature) {
 };
 
 const zoomToCityByCode = async (provinceCode: string, cityCode: string) => {
-  const features = cityCollection?.features.find(
+  const feature = cityCollection?.features.find(
     (feature) => getProvinceCode(feature) === provinceCode && getCityCode(feature) === cityCode,
   );
-  if (features) zoomToCity(features);
+  if (feature) zoomToCity(feature);
 };
 
 const selectTownByCode = (provinceCode: string, cityCode: string, townCode: string) => {
