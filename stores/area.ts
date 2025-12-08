@@ -61,10 +61,12 @@ export const useAreaStore = defineStore('area', () => {
     const prevIsTownLevel = isTownLevel.value;
     const prevAreaCode = { ...currentAreaCode.value };
 
-    await updateCity({
-      provinceCode: currentAreaCode.value.province,
-      cityCode: currentAreaCode.value.city,
-    });
+    if (isCityLevel.value || isTownLevel.value) {
+      await updateCity({
+        provinceCode: currentAreaCode.value.province,
+        cityCode: currentAreaCode.value.city,
+      });
+    }
 
     if (prevIsTownLevel) {
       await updateTown(prevAreaCode.town);
@@ -107,7 +109,12 @@ export const useAreaStore = defineStore('area', () => {
   );
 
   const isCityLevel = computed(() => currentAreaCode.value.town === AREA_DEFAULT_CODE.town);
-  const isTownLevel = computed(() => currentAreaCode.value.village === AREA_DEFAULT_CODE.village);
+
+  const isTownLevel = computed(
+    () =>
+      currentAreaCode.value.town !== AREA_DEFAULT_CODE.town &&
+      currentAreaCode.value.village === AREA_DEFAULT_CODE.village,
+  );
 
   return {
     currentYear,
