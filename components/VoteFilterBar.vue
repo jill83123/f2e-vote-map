@@ -48,12 +48,8 @@
             v-model="townSelectValue"
             :items="townSelectItems"
             :content="{ align: windowWidth < 870 ? 'end' : 'start' }"
-            :placeholder="
-              citySelectValue === `${defaultCode.province}-${defaultCode.city}`
-                ? '全部區域'
-                : '選擇區域'
-            "
-            :disabled="citySelectValue === `${defaultCode.province}-${defaultCode.city}`"
+            :placeholder="areaStore.isProvinceLevel ? '全部區域' : '選擇區域'"
+            :disabled="areaStore.isProvinceLevel"
             class="w-full min-w-[120px] rounded-s-none lg:max-w-[194px]"
             @update:model-value="handleTownChange"
           />
@@ -79,18 +75,19 @@
 </template>
 
 <script lang="ts" setup>
+import { AREA_DEFAULT_CODE } from '@/constants/areas';
+
 const yearStore = useYearStore();
 const areaStore = useAreaStore();
 
 const { width: windowWidth } = useWindowSize();
-const defaultCode = getAreaDefaultCode();
 
 const yearSelectValue = ref(areaStore.currentYear);
 const yearSelectItems = computed(() =>
   yearStore.years.map((year: number) => ({ label: String(year), value: String(year) })),
 );
 
-const citySelectValue = ref(`${defaultCode.province}-${defaultCode.city}`);
+const citySelectValue = ref(`${AREA_DEFAULT_CODE.province}-${AREA_DEFAULT_CODE.city}`);
 const citySelectItems = computed(() =>
   areaStore.cities.map((city) => ({
     label: city.name,
@@ -108,14 +105,36 @@ const handleYearChange = (value: string) => {
 };
 
 const handleCityChange = (value: string) => {
-  townSelectValue.value = '';
-  const [provinceCode = defaultCode.province, cityCode = defaultCode.city] = value.split('-');
-  areaStore.updateCity({ provinceCode, cityCode });
+  const [provinceCode, cityCode] = value.split('-');
+  if (provinceCode && cityCode) {
+    areaStore.updateCity({ provinceCode, cityCode });
+  }
 };
 
 const handleTownChange = (value: string) => {
   areaStore.updateTown(value);
 };
+
+watch(
+  () => `${areaStore.currentAreaCode.province}-${areaStore.currentAreaCode.city}`,
+  (newVal) => {
+    citySelectValue.value = newVal;
+  },
+);
+
+watch(
+  () => areaStore.currentAreaCode.town,
+  (newVal) => {
+    if (areaStore.isLoading) return;
+
+    if (newVal === AREA_DEFAULT_CODE.town) {
+      townSelectValue.value = '';
+      return;
+    }
+
+    townSelectValue.value = newVal;
+  },
+);
 </script>
 
 <style scoped></style>

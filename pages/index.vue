@@ -18,7 +18,7 @@
             :label="year.toString()"
             :to="{ path: '/result' }"
             class="hover:bg-primary active:bg-primary w-full p-3 hover:text-white"
-            @click="areaStore.updateYear(String(year))"
+            @click="handleYearSelect(year)"
           />
         </li>
       </ul>
@@ -45,6 +45,11 @@ const areaStore = useAreaStore();
 
 await yearStore.getYears();
 const years = computed(() => (yearStore.years ? [...yearStore.years].reverse() : []));
+
+const handleYearSelect = (year: number) => {
+  areaStore.resetAreaCode();
+  areaStore.updateYear(String(year));
+};
 </script>
 
 <style scoped></style>

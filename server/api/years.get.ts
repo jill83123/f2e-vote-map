@@ -1,4 +1,4 @@
-import RESPONSES from '../constants/responses';
+import { RESPONSES } from '../constants/responses';
 import { prisma } from '../db/client';
 
 export default defineEventHandler(async () => {

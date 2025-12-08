@@ -1,6 +1,12 @@
 <template>
   <div>
     <VoteFilterBar />
+
+    <aside
+      class="fixed h-[calc(100dvh-100px)] w-full max-w-[500px] sm:h-[calc(100dvh-120px)] md:h-[calc(100dvh-66px)]"
+    >
+      <MapView />
+    </aside>
   </div>
 </template>
 

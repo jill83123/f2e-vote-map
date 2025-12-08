@@ -1,47 +1,46 @@
-type Candidate = {
+export type TAreaLevel = 'province' | 'city' | 'town' | 'village';
+
+export type TAreaCode = {
+  [K in `${TAreaLevel}Code`]: string;
+};
+
+type TCandidate = {
   name: string;
   partyName: string;
   totalVotes: number;
   isElected: boolean;
 };
 
-type History = {
+type THistory = {
   year: number;
   partyName: string;
   totalVotes: number;
 };
 
-type Area = {
+type TArea = TAreaCode & {
   name: string;
   validVotes: number;
   invalidVotes: number;
   totalVotes: number;
   voterTurnout: number;
-  candidates: Candidate[];
-  history: History[];
+  candidates: TCandidate[];
+  history: THistory[];
 };
 
-export type AreaCode = {
-  provinceCode: string;
-  cityCode: string;
-  townCode: string;
-  villageCode: string;
-};
-
-export type SubArea = AreaCode & {
+export type TSubArea = TAreaCode & {
   name: string;
-  candidates: Candidate[];
+  candidates: TCandidate[];
   totalVotes: number;
   voterTurnout: number;
 };
 
-type ParentArea = AreaCode & {
+type TParentArea = TAreaCode & {
   name: string;
 };
 
-export type GetAreaResponse = {
+export type TGetAreaResponse = {
   year: number;
-  area: Area;
-  subAreas: SubArea[];
-  parentAreas: ParentArea[];
+  area: TArea;
+  subAreas: TSubArea[];
+  parentAreas: TParentArea[];
 };

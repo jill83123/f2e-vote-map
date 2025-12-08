@@ -1,64 +1,63 @@
-import type { AreaCode } from '@/types/area';
-import { getAreaDefaultCode } from '@/utils/area';
-import { CITY_ORDER, EXCLUDED_PROVINCE } from '../constants/area';
-import RESPONSES from '../constants/responses';
-import { prisma } from '../db/client';
-import { areaQuerySchema } from '../schemas/area';
-import { formatZodError } from '../utils/format';
+import { AREA_DEFAULT_CODE } from '@/constants/areas';
+import { CITY_ORDER, EXCLUDED_PROVINCE } from '@/server/constants/areas';
+import { RESPONSES } from '@/server/constants/responses';
+import { prisma } from '@/server/db/client';
+import { areaQuerySchema } from '@/server/schemas/area';
+import { formatZodError } from '@/server/utils/format';
+import type { TAreaCode, TAreaLevel } from '@/types/area';
 
-type AreaLevel = 'nation' | 'city' | 'town' | 'village';
-type AreaLevelParams = { level: AreaLevel } & Omit<AreaCode, 'villageCode'>;
+type TGetLevelDataParams = { level: TAreaLevel } & Omit<TAreaCode, 'villageCode'>;
 
-const defaultCode = getAreaDefaultCode();
+const getAreaLevel = ({ provinceCode, cityCode, townCode, villageCode }: TAreaCode): TAreaLevel => {
+  const isProvince =
+    provinceCode === AREA_DEFAULT_CODE.province &&
+    cityCode === AREA_DEFAULT_CODE.city &&
+    townCode === AREA_DEFAULT_CODE.town &&
+    villageCode === AREA_DEFAULT_CODE.village;
 
-const getAreaLevel = ({ provinceCode, cityCode, townCode, villageCode }: AreaCode): AreaLevel => {
-  if (
-    provinceCode === defaultCode.province &&
-    cityCode === defaultCode.city &&
-    townCode === defaultCode.town &&
-    villageCode === defaultCode.village
-  )
-    return 'nation';
+  const isCity = townCode === AREA_DEFAULT_CODE.town && villageCode === AREA_DEFAULT_CODE.village;
+  const isTown = villageCode === AREA_DEFAULT_CODE.village;
 
-  if (townCode === defaultCode.town && villageCode === defaultCode.village) return 'city';
-  if (villageCode === defaultCode.village) return 'town';
+  if (isProvince) return 'province';
+  if (isCity) return 'city';
+  if (isTown) return 'town';
   return 'village';
 };
 
-const getSubAreaWhere = ({ level, provinceCode, cityCode, townCode }: AreaLevelParams) => {
+const getSubAreaWhere = ({ level, provinceCode, cityCode, townCode }: TGetLevelDataParams) => {
   switch (level) {
-    case 'nation':
+    case 'province':
       return {
-        town_code: defaultCode.town,
+        town_code: AREA_DEFAULT_CODE.town,
       };
     case 'city':
       return {
         province_code: provinceCode,
         city_code: cityCode,
-        town_code: { not: defaultCode.town },
-        village_code: defaultCode.village,
+        town_code: { not: AREA_DEFAULT_CODE.town },
+        village_code: AREA_DEFAULT_CODE.village,
       };
     case 'town':
       return {
         province_code: provinceCode,
         city_code: cityCode,
         town_code: townCode,
-        village_code: { not: defaultCode.village },
+        village_code: { not: AREA_DEFAULT_CODE.village },
       };
     default:
       return null;
   }
 };
 
-const getParentAreaWhere = ({ level, provinceCode, cityCode, townCode }: AreaLevelParams) => {
-  if (level === 'nation') return [];
+const getParentAreaWhere = ({ level, provinceCode, cityCode, townCode }: TGetLevelDataParams) => {
+  if (level === 'province') return [];
 
   const codes = [
     {
-      province_code: defaultCode.province,
-      city_code: defaultCode.city,
-      town_code: defaultCode.town,
-      village_code: defaultCode.village,
+      province_code: AREA_DEFAULT_CODE.province,
+      city_code: AREA_DEFAULT_CODE.city,
+      town_code: AREA_DEFAULT_CODE.town,
+      village_code: AREA_DEFAULT_CODE.village,
     },
   ];
 
@@ -66,8 +65,8 @@ const getParentAreaWhere = ({ level, provinceCode, cityCode, townCode }: AreaLev
     codes.push({
       province_code: provinceCode,
       city_code: cityCode,
-      town_code: defaultCode.town,
-      village_code: defaultCode.village,
+      town_code: AREA_DEFAULT_CODE.town,
+      village_code: AREA_DEFAULT_CODE.village,
     });
   }
 
@@ -76,7 +75,7 @@ const getParentAreaWhere = ({ level, provinceCode, cityCode, townCode }: AreaLev
       province_code: provinceCode,
       city_code: cityCode,
       town_code: townCode,
-      village_code: defaultCode.village,
+      village_code: AREA_DEFAULT_CODE.village,
     });
   }
 
@@ -201,7 +200,7 @@ export default defineEventHandler(async (event) => {
       })
     : [];
 
-  if (level === 'nation') {
+  if (level === 'province') {
     subAreas.sort((a, b) => {
       const aIdx = CITY_ORDER.indexOf(a.name);
       const bIdx = CITY_ORDER.indexOf(b.name);
@@ -230,6 +229,10 @@ export default defineEventHandler(async (event) => {
   return {
     year,
     area: {
+      provinceCode,
+      cityCode,
+      townCode,
+      villageCode,
       name: area.name,
       validVotes: area.area_vote?.valid_votes ?? 0,
       invalidVotes: area.area_vote?.invalid_votes ?? 0,
